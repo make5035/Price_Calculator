@@ -16,5 +16,5 @@ Il permet d'estimer un salaire annuel et d'arrondir le résultat à la centaine 
 1. Cloner le projet :
 
 ```bash
-git clone https://github.com/ton-utilisateur/price-calculator.git
+git clone https://github.com/make5035/Price_Calculator
 cd price-calculator
