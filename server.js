@@ -1,13 +1,13 @@
-const express = require('express');        // Importe express
-const path = require('path');              // Sert à gérer les chemins de fichiers
+const express = require('express');
+const path = require('path');
 
-const app = express();                     // Crée l'application Express
-const port = 8080;                         // Port local
+const app = express();
+const port = 8080;
 
-// Sert les fichiers statiques (HTML, CSS, images...) dans 'public'
+// Sert les fichiers du dossier public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// API de calcul (appelée par fetch dans le JS)
+// ✅ ROUTE API : doit être AVANT le 404
 app.get('/api/calculate', (req, res) => {
   const salary = parseFloat(req.query.salary);
   const days = parseFloat(req.query.days);
@@ -22,12 +22,12 @@ app.get('/api/calculate', (req, res) => {
   res.json({ price });
 });
 
-// Si aucune route ne correspond : 404
+// ❌ Cette route doit être EN DERNIER
 app.get('*', (req, res) => {
   res.status(404).send("Page non trouvée");
 });
 
-// Lancer le serveur
+// Démarre le serveur
 app.listen(port, () => {
   console.log(`✅ Serveur lancé sur http://localhost:${port}`);
 });
