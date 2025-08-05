@@ -5,7 +5,7 @@ const app = express();
 const port = 8080;
 
 // Sert les fichiers statiques (HTML, CSS, JS, images) dans le dossier "public"
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, '/public/')));
 
 // Route API pour calculer un tarif
 app.get('/api/calculate', (req, res) => {
