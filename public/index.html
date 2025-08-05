@@ -39,26 +39,27 @@
 
   <!-- JavaScript -->
   <script>
-    document.getElementById("budget").addEventListener("submit", function(e) {
-      e.preventDefault(); // Empêche le rechargement de la page
+  document.getElementById("budget").addEventListener("submit", async function(e) {
+    e.preventDefault();
 
-      const salary = parseFloat(document.getElementById("salary").value);
-      const days = parseFloat(document.getElementById("days").value);
+    const salary = document.getElementById("salary").value;
+    const days = document.getElementById("days").value;
 
-      if (isNaN(salary) || isNaN(days) || salary <= 0 || days <= 0) {
-        document.getElementById("finalPrice").textContent = "Please enter valid numbers.";
-        return;
+    try {
+      const response = await fetch(`/api/calculate?salary=${salary}&days=${days}`);
+      const data = await response.json();
+
+      if (data.error) {
+        document.getElementById("finalPrice").textContent = "❌ " + data.error;
+      } else {
+        document.getElementById("finalPrice").textContent = `✅ Suggested price: £${data.price}`;
       }
-
-      const dailyRate = salary / 365;
-      let price = dailyRate * days;
-
-      // Arrondi au multiple de 50 le plus proche
-      price = Math.round(price / 50) * 50;
-
-      document.getElementById("finalPrice").textContent = `Suggested price: £${price}`;
-    });
-  </script>
+    } catch (error) {
+      document.getElementById("finalPrice").textContent = "⚠️ Erreur de communication avec le serveur.";
+      console.error(error);
+    }
+  });
+</script>
 
 </body>
 </html>
