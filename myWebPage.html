@@ -1,42 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta charset="UTF-8"> <!-- Pour gérer les accents -->
   <title>Price Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    img {
+      width: 100%;
+      margin-top: 30px;
+    }
+
+    label, input {
+      display: block;
+      margin-top: 10px;
+    }
+
+    #finalPrice {
+      font-weight: bold;
+      margin-top: 15px;
+      display: block;
+    }
+  </style>
 </head>
 <body>
 
-<div>
   <h1>How much to charge?</h1>
   <p>If you were a freelance web designer, how much should you charge for a website? Fill out the form and find out!</p>
-</div>
 
-<div>
-  <form id="budget" action="javascript:calculatePrice()">
-    <label for="salary">What annual salary seems suitable for you?</label>
-    <input type="text" id="salary" name="salary"/><br><br>
-    <label for="days">How many days do you think it will take you to make the website?</label>
-    <input type="text" id="days" name="days"/><br><br>
-    <input type="submit" value="Calculate your price!"><br><br>
-    <label id="finalPrice"> ??? </label>
+  <!-- FORMULAIRE -->
+  <form id="budget">
+    <label for="salary">Annual salary you want (£):</label>
+    <input type="number" id="salary" name="salary" required />
+
+    <label for="days">Estimated number of work days:</label>
+    <input type="number" id="days" name="days" required />
+
+    <button type="submit">Calculate your price!</button>
+
+    <span id="finalPrice"></span>
   </form>
-</div>
 
+  <img src="https://c0.lestechnophiles.com/images.frandroid.com/wp-content/uploads/2019/05/windows-xp-hd.jpg?resize=1200&key=3f11a5a8&watermark" alt="background">
 
-<script>
-  function calculatePrice() {
-    var s = document.getElementById("salary").value;
-    var d = document.getElementById("days").value;
-    console.log("Calculating price")
-    console.log(s)
-    console.log(d)
-    let finalPrice = 0;
-    dailyRate = s/365;
-    finalPrice = dailyRate * d;
-    document.getElementById("finalPrice").innerHTML = finalPrice;
-  }
+  <!-- SCRIPT JS -->
+  <script>
+    // Quand on envoie le formulaire
+    document.getElementById("budget").addEventListener("submit", function(e) {
+      e.preventDefault(); // Empêche le rechargement de la page
+
+      const salary = parseFloat(document.getElementById("salary").value);
+      const days = parseFloat(document.getElementById("days").value);
+
+      // Vérifie si c’est bien des nombres
+      if (isNaN(salary) || isNaN(days) || salary <= 0 || days <= 0) {
+        document.getElementById("finalPrice").textContent = "Please enter valid positive numbers.";
+        return;
+      }
+
+      // Calcul
+      const dailyRate = salary / 365;
+      let price = dailyRate * days;
+
+      // Arrondi au plus proche multiple de 50
+      price = Math.round(price / 50) * 50;
+
+      document.getElementById("finalPrice").textContent = `Suggested price: £${price}`;
+    });
   </script>
 
 </body>
- <img src="https://c0.lestechnophiles.com/images.frandroid.com/wp-content/uploads/2019/05/windows-xp-hd.jpg?resize=1200&key=3f11a5a8&watermark" alt="background">
-
 </html>
+
