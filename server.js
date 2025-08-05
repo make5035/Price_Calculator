@@ -4,10 +4,10 @@ const path = require('path');
 const app = express();
 const port = 8080;
 
-// Sert les fichiers du dossier public
+// Sert les fichiers statiques (HTML, CSS, JS, images) dans le dossier "public"
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ✅ ROUTE API : doit être AVANT le 404
+// Route API pour calculer un tarif
 app.get('/api/calculate', (req, res) => {
   const salary = parseFloat(req.query.salary);
   const days = parseFloat(req.query.days);
@@ -22,12 +22,12 @@ app.get('/api/calculate', (req, res) => {
   res.json({ price });
 });
 
-// ❌ Cette route doit être EN DERNIER
-app.get('*', (req, res) => {
+// Route 404 personnalisée - doit venir en dernier !
+app.use((req, res) => {
   res.status(404).send("Page non trouvée");
 });
 
-// Démarre le serveur
+// Lancer le serveur
 app.listen(port, () => {
   console.log(`✅ Serveur lancé sur http://localhost:${port}`);
 });
