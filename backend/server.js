@@ -3,7 +3,7 @@ const { MongoClient } = require("mongodb");
 
 const app = express();
 const port = 8080;
-const uri = "mongodb://127.0.0.1:27017";
+const uri = process.env.DBURI;
 
 // Route API pour ajouter un devis
 app.get('/api/quote', async (req, res) => {
