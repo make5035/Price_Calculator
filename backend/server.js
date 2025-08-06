@@ -1,3 +1,25 @@
+const { MongoClient } = require("mongodb");
+const uri = "mongodb://127.0.0.1:27017";
+
+const client = new MongoClient(uri);
+
+async function run() {
+  try {
+    await client.connect();
+    const db = client.db("mydb");
+    const collection = db.collection("quotes");
+    const quote = { quoteName: "test", salary: 30000, days: 20 };
+
+    await collection.insertOne(quote);
+    console.log("Quote insérée !");
+  } finally {
+    await client.close();
+  }
+}
+
+run().catch(console.dir);
+
+
 const express = require('express');
 const path = require('path');
 
