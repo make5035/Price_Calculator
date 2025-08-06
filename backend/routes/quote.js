@@ -1,9 +1,8 @@
-// 📁 routes/quote.js
 const express = require('express');
 const router = express.Router();
 const withDB = require('../db');
 
-// 📝 Enregistrer un devis complet
+// Enregistrement d’un devis
 router.get('/', (req, res) => {
   const { quoteName, salary, days } = req.query;
 
@@ -22,7 +21,7 @@ router.get('/', (req, res) => {
   }, res);
 });
 
-// 📋 Renvoyer tous les devis
+// 🔥 AJOUT : route pour récupérer tous les devis
 router.get('/all', (req, res) => {
   withDB(async (db) => {
     const quotes = await db.collection("quotes").find().toArray();
