@@ -1,3 +1,42 @@
+const express = require('express');
+const { MongoClient } = require("mongodb");
+
+const app = express();
+const port = 8080;
+const uri = "mongodb://127.0.0.1:27017";
+
+// Route API pour ajouter un devis
+app.get('/api/quote', async (req, res) => {
+  const quoteName = req.query.quoteName;
+
+  if (!quoteName) {
+    return res.status(400).send("Champ 'quoteName' manquant.");
+  }
+
+  const client = new MongoClient(uri);
+  try {
+    await client.connect();
+    const db = client.db("mydb");
+    const collection = db.collection("quotes");
+    await collection.insertOne({ quoteName: quoteName });
+    res.send("Devis enregistré !");
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Erreur serveur");
+  } finally {
+    await client.close();
+  }
+});
+
+// Sert les fichiers HTML/CSS depuis le dossier public
+app.use(express.static('public'));
+
+// Lancer le serveur
+app.listen(port, () => {
+  console.log(`Serveur démarré sur http://localhost:${port}`);
+});
+
+
 const { MongoClient } = require("mongodb");
 const uri = "mongodb://127.0.0.1:27017";
 
