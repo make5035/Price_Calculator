@@ -20,21 +20,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       finalPriceEl.textContent = `✅ Suggested price: £${calcData.price}`;
-      await fetch(`/api/quote?quoteName=${encodeURIComponent(quoteName)}`);
 
-      // 🔄 Rafraîchir la liste des devis après ajout
-      await fetchQuotes();
+      await fetch(`/api/quote?quoteName=${encodeURIComponent(quoteName)}&salary=${salary}&days=${days}`);
+      await fetchQuotes(); // 🔄 Rafraîchir la liste après ajout
     } catch (err) {
       finalPriceEl.textContent = "⚠️ Erreur de communication avec le serveur.";
       console.error(err);
     }
   });
 
-  // 👇 Appel au chargement initial
-  fetchQuotes();
+  fetchQuotes(); // Chargement initial
 });
 
-// 📋 Fonction pour afficher les devis
 async function fetchQuotes() {
   try {
     const res = await fetch('/api/quote/all');
@@ -47,7 +44,9 @@ async function fetchQuotes() {
       list.innerHTML = '<li class="list-group-item">Aucun devis enregistré</li>';
     } else {
       data.forEach(q => {
-        list.innerHTML += `<li class="list-group-item">${q.quoteName}</li>`;
+        list.innerHTML += `<li class="list-group-item">
+          📄 <strong>${q.quoteName}</strong> — £${q.salary}, ${q.days} days
+        </li>`;
       });
     }
   } catch (err) {
