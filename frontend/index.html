@@ -15,6 +15,10 @@
   <p>If you were a freelance web designer, how much should you charge for a website? Fill out the form and find out!</p>
 
   <!-- Formulaire -->
+  <label for="quoteName">Nom du devis :</label>
+  <input type="text" id="quoteName" name="quoteName" />
+  <button onclick="sendQuote()">Envoyer</button>
+
   <form id="budget" class="mb-4">
     <div class="mb-3">
       <label for="salary" class="form-label">Annual Salary (£):</label>
@@ -60,6 +64,17 @@
     }
   });
 </script>
+<script>
+  function sendQuote() {
+    const quoteName = document.getElementById("quoteName").value;
+
+    fetch(`/api/quote?quoteName=${encodeURIComponent(quoteName)}`)
+      .then(res => res.text())
+      .then(data => alert(data))
+      .catch(err => alert("Erreur : " + err));
+  }
+</script>
 
 </body>
+
 </html>
