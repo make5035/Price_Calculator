@@ -21,9 +21,36 @@ document.addEventListener("DOMContentLoaded", () => {
 
       finalPriceEl.textContent = `✅ Suggested price: £${calcData.price}`;
       await fetch(`/api/quote?quoteName=${encodeURIComponent(quoteName)}`);
+
+      // 🔄 Rafraîchir la liste des devis après ajout
+      await fetchQuotes();
     } catch (err) {
       finalPriceEl.textContent = "⚠️ Erreur de communication avec le serveur.";
       console.error(err);
     }
   });
+
+  // 👇 Appel au chargement initial
+  fetchQuotes();
 });
+
+// 📋 Fonction pour afficher les devis
+async function fetchQuotes() {
+  try {
+    const res = await fetch('/api/quote/all');
+    const data = await res.json();
+
+    const list = document.getElementById('quoteList');
+    list.innerHTML = '';
+
+    if (data.length === 0) {
+      list.innerHTML = '<li class="list-group-item">Aucun devis enregistré</li>';
+    } else {
+      data.forEach(q => {
+        list.innerHTML += `<li class="list-group-item">${q.quoteName}</li>`;
+      });
+    }
+  } catch (err) {
+    console.error('Erreur lors du chargement des devis', err);
+  }
+}
