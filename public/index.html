@@ -4,65 +4,79 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Price Calculator</title>
-
-  <!-- Bootstrap CDN (style tout fait) -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body class="container mt-5">
+<body class="container py-5">
+  <h1 class="text-primary mb-3">How much to charge?</h1>
+  <p class="mb-4">Freelance web designer? Enter your salary and time estimate to calculate your rate!</p>
 
-  <h1 class="text-primary mb-4">How much to charge?</h1>
-  <p>If you were a freelance web designer, how much should you charge for a website? Fill out the form and find out!</p>
-
-  <!-- Formulaire -->
-  <form id="budget" class="mb-4">
-    <div class="mb-3">
-      <label for="salary" class="form-label">Annual Salary (£):</label>
-      <input type="number" class="form-control" id="salary" required>
+  <form id="budget" class="row g-3 mb-4">
+    <div class="col-md-4">
+      <input type="text" id="quoteName" class="form-control" placeholder="Quote name" required>
     </div>
-
-    <div class="mb-3">
-      <label for="days" class="form-label">Estimated Days to Complete:</label>
-      <input type="number" class="form-control" id="days" required>
+    <div class="col-md-4">
+      <input type="number" id="salary" class="form-control" placeholder="Annual Salary (£)" required>
     </div>
-
-    <button type="submit" class="btn btn-success">Calculate!</button>
+    <div class="col-md-4">
+      <input type="number" id="days" class="form-control" placeholder="Days to complete" required>
+    </div>
+    <div class="col-12">
+      <button type="submit" class="btn btn-success">Calculate & Save</button>
+    </div>
   </form>
 
-  <div>
-    <span id="finalPrice" class="fw-bold fs-4 text-success"></span>
+  <div class="mb-3">
+    <span id="finalPrice" class="fw-bold fs-5 text-success"></span>
   </div>
 
-<h2 class="mt-5">📋 Devis enregistrés :</h2>
-<ul id="quoteList" class="list-group mb-5"></ul>
+  <h2 class="mt-5">📋 Devis enregistrés :</h2>
+  <ul id="quoteList" class="list-group mb-5"></ul>
 
-  <!-- Image illustrative -->
-  <img src="https://c0.lestechnophiles.com/images.frandroid.com/wp-content/uploads/2019/05/windows-xp-hd.jpg?resize=1200&key=3f11a5a8&watermark" 
-       class="img-fluid mt-5" alt="Background image of Windows XP">
+  <img src="https://c0.lestechnophiles.com/images.frandroid.com/wp-content/uploads/2019/05/windows-xp-hd.jpg?resize=1200&key=3f11a5a8&watermark" class="img-fluid" alt="Windows XP background">
 
-  <!-- JavaScript -->
   <script>
-  document.getElementById("budget").addEventListener("submit", async function(e) {
-    e.preventDefault();
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("budget");
+      const finalPriceEl = document.getElementById("finalPrice");
+      const quoteListEl = document.getElementById("quoteList");
 
-    const salary = document.getElementById("salary").value;
-    const days = document.getElementById("days").value;
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const quoteName = quoteNameEl.value.trim();
+        const salary = salaryEl.value;
+        const days = daysEl.value;
 
-    try {
-      const response = await fetch(`/api/calculate?salary=${salary}&days=${days}`);
-      const data = await response.json();
+        try {
+          const res = await fetch(`/api/calculate?salary=${salary}&days=${days}`);
+          const data = await res.json();
+          if (data.error) return finalPriceEl.textContent = "❌ " + data.error;
 
-      if (data.error) {
-        document.getElementById("finalPrice").textContent = "❌ " + data.error;
-      } else {
-        document.getElementById("finalPrice").textContent = `✅ Suggested price: £${data.price}`;
+          finalPriceEl.textContent = `✅ Suggested price: £${data.price}`;
+          await fetch(`/api/quote?quoteName=${encodeURIComponent(quoteName)}&salary=${salary}&days=${days}`);
+          loadQuotes();
+        } catch {
+          finalPriceEl.textContent = "⚠️ Server communication error.";
+        }
+      });
+
+      async function loadQuotes() {
+        quoteListEl.innerHTML = "";
+        try {
+          const res = await fetch("/api/quote/all");
+          const quotes = await res.json();
+          quoteListEl.innerHTML = quotes.length ? quotes.map(q => `<li class='list-group-item'>📌 ${q.quoteName} — £${q.salary} — ${q.days} days</li>`).join('') : "<li class='list-group-item'>Aucun devis enregistré.</li>";
+        } catch {
+          quoteListEl.innerHTML = "<li class='list-group-item'>❌ Failed to load quotes.</li>";
+        }
       }
-    } catch (error) {
-      document.getElementById("finalPrice").textContent = "⚠️ Erreur de communication avec le serveur.";
-      console.error(error);
-    }
-  });
-</script>
 
+      const quoteNameEl = document.getElementById("quoteName");
+      const salaryEl = document.getElementById("salary");
+      const daysEl = document.getElementById("days");
+
+      loadQuotes();
+    });
+  </script>
 </body>
 </html>
