@@ -4,6 +4,7 @@ const { MongoClient } = require('mongodb');
 const uri = process.env.DBURI; // 👈 Récupère la variable DBURI définie dans le fichier .env
 
 async function withDB(callback, res) {
+  console.log("DEBUG DBURI:", process.env.DBURI);
   const client = new MongoClient(uri);
 
   try {
